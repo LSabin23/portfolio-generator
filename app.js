@@ -1,4 +1,57 @@
 const inquirer = require('inquirer')
+const fs = require('fs')
+// this expression assigns the anonymous HTML template function in page-template.js to the variable generatePage
+const generatePage = require('./src/page-template.js')
+
+// MOCK DATA START
+/*
+const mockData = {
+  name: 'Lernantino',
+  github: 'lernantino',
+  confirmAbout: true,
+  about:
+    'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et.',
+  projects: [
+    {
+      name: 'Run Buddy',
+      description:
+        'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
+      languages: ['HTML', 'CSS'],
+      link: 'https://github.com/lernantino/run-buddy',
+      feature: true,
+      confirmAddProject: true
+    },
+    {
+      name: 'Taskinator',
+      description:
+        'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
+      languages: ['JavaScript', 'HTML', 'CSS'],
+      link: 'https://github.com/lernantino/taskinator',
+      feature: true,
+      confirmAddProject: true
+    },
+    {
+      name: 'Taskmaster Pro',
+      description:
+        'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
+      languages: ['JavaScript', 'jQuery', 'CSS', 'HTML', 'Bootstrap'],
+      link: 'https://github.com/lernantino/taskmaster-pro',
+      feature: false,
+      confirmAddProject: true
+    },
+    {
+      name: 'Robot Gladiators',
+      description:
+        'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque.',
+      languages: ['JavaScript'],
+      link: 'https://github.com/lernantino/robot-gladiators',
+      feature: false,
+      confirmAddProject: false
+    }
+  ]
+}
+*/
+// MOCK DATA END
 
 const promptUser = () => {
   return inquirer.prompt([
@@ -121,7 +174,7 @@ Add a New Project
     ])
     .then(projectData => {
       portfolioData.projects.push(projectData)
-      if(projectData.confirmAddProject) {
+      if (projectData.confirmAddProject) {
         return promptProject(portfolioData)
       } else {
         return portfolioData
@@ -129,24 +182,18 @@ Add a New Project
     })
 }
 
+// adding mockData call to skip manual data entry for testing
+// const pageHTML = generatePage(mockData)
+
 promptUser()
   .then(promptProject)
   .then(portfolioData => {
-    console.log(portfolioData)
+    const pageHTML = generatePage(portfolioData)
+
+    fs.writeFile('./index.html', pageHTML, err => {
+      // creates an exception and stops the execution of the remaining code
+      if (err) throw err
+
+      console.log('Portfolio complete! Check out index.html to see the output.')
+    })
   })
-
-/*
-commenting out this code since we don't need it for the rest of this lesson
-
-const fs = require('fs')
-const generatePage = require('./src/page-template.js')
-
-const pageHTML = generatePage(name, github)
-
-fs.writeFile('./index.html', pageHTML, err => {
-  // creates an exception and stops the execution of the remaining code
-  if (err) throw err
-
-  console.log('Portfolio complete! Check out index.html to see the output.')
-})
-*/
